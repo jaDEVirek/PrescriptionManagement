@@ -5,11 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import src.main.java.com.jadevirek.prescriptionapp.common.CreateEntityException;
-import src.main.java.com.jadevirek.prescriptionapp.common.EntityNotFoundException;
+import src.main.java.com.jadevirek.prescriptionapp.common.NoEtityFoundException;
 
 /**
  * GlobalExceptionHandler class
@@ -21,15 +20,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex,
             WebRequest request) {
 
-        return handleExceptionInternal(ex, new EntityNotFoundException(ex.getMessage()),
+        return handleExceptionInternal(ex, new NoEtityFoundException(ex.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleNoEntityFoundException(EntityNotFoundException ex,
+    @ExceptionHandler(NoEtityFoundException.class)
+    public ResponseEntity<Object> handleNoEntityFoundException(NoEtityFoundException ex,
             WebRequest request) {
-        return handleExceptionInternal(ex, new EntityNotFoundException(ex.getMessage()),
+        return handleExceptionInternal(ex, new NoEtityFoundException(ex.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.BAD_REQUEST, request);
     }

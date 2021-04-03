@@ -5,5 +5,6 @@ import org.springframework.stereotype.Repository;
 import src.main.java.com.jadevirek.prescriptionapp.model.Patient;
 
 @Repository
-public interface  IPatientRepository  extends JpaRepository<Patient,Long> {
+public interface IPatientRepository extends JpaRepository<Patient, Long> {
+
 }

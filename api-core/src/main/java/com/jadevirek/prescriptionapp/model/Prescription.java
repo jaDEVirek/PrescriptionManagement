@@ -140,4 +140,5 @@ public class Prescription implements Serializable {
     public void setModifiedOn(LocalDateTime modifiedOn) {
         this.modifiedOn = modifiedOn;
     }
+
 }

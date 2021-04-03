@@ -1,12 +1,12 @@
 package src.main.java.com.jadevirek.prescriptionapp.configuration;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.NameTokenizers;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.modelmapper.config.Configuration.AccessLevel;
 
 import java.util.Objects;
 
@@ -20,7 +20,7 @@ public class ModelMapperConfiguration {
             throw new Exception("Object already exist");
         }
     }
-    
+
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public static ModelMapper getModelMapperInstance() {

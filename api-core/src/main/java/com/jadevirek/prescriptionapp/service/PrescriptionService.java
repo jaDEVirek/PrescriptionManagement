@@ -49,17 +49,19 @@ public class PrescriptionService {
      */
     public Optional<PrescriptionDto> findById(Long id) {
         Assert.notNull(id, "id can't be null");
+        Optional<Prescription> byId = iPrescriptionRepository.findById(id);
+        System.out.println(byId);
         return iPrescriptionRepository.findById(id)
                 .map(this::convertToDto);
 
     }
 
     /**
-     * This method delete person by id
+     * This method delete prescription by id
      *
      * @param id
      */
-    public Optional<PrescriptionDto> deltePrescription(Long id) {
+    public Optional<PrescriptionDto> deletePrescription(Long id) {
         Assert.notNull(id, "id can't be null");
         Optional<Prescription> prescriptionDto = iPrescriptionRepository.findById(id);
         iPrescriptionRepository.deleteById(id);
@@ -75,11 +77,12 @@ public class PrescriptionService {
     public PrescriptionDto addPrescription(PrescriptionDto prescriptionDto) {
         Assert.notNull(prescriptionDto, "Object can't be null!");
         validatePrescriptionFields(prescriptionDto);
-        Prescription save = iPrescriptionRepository.save(modelMapper.map(prescriptionDto, Prescription.class));
-        return convertToDto(save);
+//        Prescription save = ;
+        return convertToDto(iPrescriptionRepository.save(modelMapper.map(prescriptionDto, Prescription.class)));
     }
 
     private PrescriptionDto convertToDto(Prescription prescription) {
+        System.out.println(prescription);
         return modelMapper.map(prescription, PrescriptionDtoBuilder.class).build();
     }
 
