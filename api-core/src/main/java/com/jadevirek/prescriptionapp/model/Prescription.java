@@ -46,6 +46,7 @@ public class Prescription implements Serializable {
     @PrePersist
     public void persistOnCreate() {
         this.createdOn = LocalDateTime.now();
+        this.expirationDate = createdOn.plusDays(14);
     }
 
     @PreUpdate

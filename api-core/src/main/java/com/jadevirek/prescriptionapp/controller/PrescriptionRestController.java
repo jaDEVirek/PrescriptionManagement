@@ -4,7 +4,7 @@ package src.main.java.com.jadevirek.prescriptionapp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import src.main.java.com.jadevirek.prescriptionapp.common.NoEtityFoundException;
+import src.main.java.com.jadevirek.prescriptionapp.common.CreateEntityException;
 import src.main.java.com.jadevirek.prescriptionapp.model.dto.PrescriptionDto;
 import src.main.java.com.jadevirek.prescriptionapp.service.PrescriptionService;
 
@@ -21,6 +21,7 @@ public class PrescriptionRestController {
             PrescriptionService prescriptionService) {
         this.prescriptionService = prescriptionService;
     }
+
     /**
      * This method return all Prescriptions
      *
@@ -29,7 +30,7 @@ public class PrescriptionRestController {
     @GetMapping("/prescription")
     @CrossOrigin
     public List<PrescriptionDto> findAll() {
-         return prescriptionService.findAll();
+        return prescriptionService.findAll();
     }
 
     @GetMapping(value = "/prescription/{id}")
@@ -38,7 +39,7 @@ public class PrescriptionRestController {
         System.out.println(byId);
         return prescriptionService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(()-> new IllegalArgumentException("No entity found, with given id"));
+                .orElseThrow(() -> new IllegalArgumentException("No entity found, with given id"));
     }
 
     @DeleteMapping("/prescription/{id}")
@@ -46,7 +47,7 @@ public class PrescriptionRestController {
     public ResponseEntity<?> deletePrescription(@PathVariable Long id) {
         return prescriptionService.deletePrescription(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(()-> new IllegalArgumentException("Deletion failed- no entity found."));
+                .orElseThrow(() -> new IllegalArgumentException("Deletion failed- no entity found."));
     }
 
     /**
@@ -62,7 +63,26 @@ public class PrescriptionRestController {
             prescriptionService.addPrescription(prescriptionDto);
             return ResponseEntity.ok(prescriptionDto);
         } catch (Exception ex) {
-            throw new NoEtityFoundException(ex);
+            throw new CreateEntityException(ex, ex.getMessage());
+        }
+    }
+
+    /**
+     * Update prescription in database
+     *
+     * @param id
+     * @param prescription
+     * @return
+     */
+    @PutMapping(value = "/prescription/{id}")
+    public ResponseEntity<?> updateById(@PathVariable(value = "id") long id,
+            @RequestBody PrescriptionDto prescription) {
+        try {
+            prescriptionService.updatePrescriptionById(id, prescription);
+            return ResponseEntity.ok(prescription);
+        } catch (Exception e) {
+            return ResponseEntity.notFound()
+                    .build();
         }
     }
 }
