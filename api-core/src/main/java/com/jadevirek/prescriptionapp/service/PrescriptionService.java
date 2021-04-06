@@ -14,6 +14,7 @@ import src.main.java.com.jadevirek.prescriptionapp.model.dto.PrescriptionDto.Pre
 import src.main.java.com.jadevirek.prescriptionapp.repository.IPrescriptionRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -31,8 +32,6 @@ public class PrescriptionService {
     }
 
     /**
-     *
-     *
      * @return
      */
     public List<PrescriptionDto> findAll() {
@@ -49,11 +48,8 @@ public class PrescriptionService {
      */
     public Optional<PrescriptionDto> findById(Long id) {
         Assert.notNull(id, "id can't be null");
-        Optional<Prescription> byId = iPrescriptionRepository.findById(id);
-        System.out.println(byId);
         return iPrescriptionRepository.findById(id)
                 .map(this::convertToDto);
-
     }
 
     /**
@@ -69,8 +65,6 @@ public class PrescriptionService {
     }
 
     /**
-     *
-     *
      * @param prescriptionDto
      * @return
      */
@@ -81,17 +75,42 @@ public class PrescriptionService {
         return convertToDto(iPrescriptionRepository.save(modelMapper.map(prescriptionDto, Prescription.class)));
     }
 
-    private PrescriptionDto convertToDto(Prescription prescription) {
-        System.out.println(prescription);
-        return modelMapper.map(prescription, PrescriptionDtoBuilder.class).build();
+
+    /**
+     * This method update prescription by id
+     *  @param id
+     * @param prescription
+     * @return
+     */
+    public PrescriptionDto updatePrescriptionById(long id, PrescriptionDto prescription) {
+        Assert.notNull(id, "id can't be null");
+        Assert.notNull(prescription, "Prescription can't be null");
+       return iPrescriptionRepository.findById(id).map(elem-> {
+                elem.setSerialNumber(prescription.getSerialNumber());
+                elem.setDescription(prescription.getDescription());
+                elem.setDate(prescription.getDate());
+                elem.setExpirationDate(prescription.getDate().plusDays(14));
+                iPrescriptionRepository.save(elem);
+              return prescription;
+        }).orElseThrow(NoSuchElementException::new);
     }
 
-    private void validatePrescriptionFields(PrescriptionDto prescriptionDto){
-       try{
-           Assert.notNull(prescriptionDto.getSerialNumber(), "Prescription required serial-number! ");
-           Assert.notNull(prescriptionDto.getDate(), "Prescription required date! ");
-       }catch (Exception ex){
-           throw new CreateEntityException(ex);
-       }
+
+
+
+    private PrescriptionDto convertToDto(Prescription prescription) {
+        return modelMapper.map(prescription, PrescriptionDtoBuilder.class)
+                .build();
     }
+
+    private void validatePrescriptionFields(PrescriptionDto prescriptionDto) {
+        try {
+            Assert.notNull(prescriptionDto.getSerialNumber(), "Prescription required serial-number!");
+            Assert.notNull(prescriptionDto.getDate(), "Prescription required date! ");
+            Assert.notNull(prescriptionDto.getDate(), "Prescription required date! ");
+        } catch (Exception ex) {
+            throw new CreateEntityException(ex,ex.getMessage());
+        }
+    }
+
 }
